@@ -8,6 +8,9 @@ on:
   workflow_dispatch:
 
 
+env:
+  FORESIGHT_UPLOADER_SIGNER_URL: https://upload.thundra.us
+
 jobs:
   build:
 
