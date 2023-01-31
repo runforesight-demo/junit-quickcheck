@@ -6,8 +6,14 @@ on:
   pull_request:
     branches: [ "master" ]
   workflow_dispatch:
+  schedule:
+    - cron: "0 1 * * *"
 
 
+env:
+  FORESIGHT_UPLOADER_SIGNER_URL: https://upload.service.runforesight.us
+  WORKFLOW_TELEMETRY_BASE_URL: https://api.service.runforesight.us
+  
 jobs:
   build:
 
@@ -15,6 +21,7 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - name: Collect Workflow Telemetry
       if: always()
       uses: runforesight/foresight-workflow-kit-action@v1
@@ -29,7 +36,7 @@ jobs:
         cache: maven
 
     - name: Build with Maven
-      run: mvn clean install
+      run: mvn clean -fn install
 
 
     - name: Analyze Test and/or Coverage Results
@@ -37,5 +44,5 @@ jobs:
       uses: runforesight/foresight-test-kit-action@v1
       with:
         api_key: ${{ secrets.FORESIGHT_API_KEY }}
-        test_framework: junit
-        test_path: "**/target/surefire-reports/**"
+        coverage_format: jacoco/xml
+        coverage_path: "**/target/site/jacoco/*.xml"
